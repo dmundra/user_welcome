@@ -7,6 +7,7 @@ use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Datetime\DrupalDateTime;
 
 /**
  * Provides a user welcome block.
@@ -23,9 +24,18 @@ class UserWelcomeBlock extends BlockBase implements BlockPluginInterface {
    * {@inheritdoc}
    */
   public function build() {
+    $config = $this->getConfiguration();
+
+    $user = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id());
+
+    // Format: December 21st, 2012 9:01 am
+    $formatted_date = \Drupal::service('date.formatter')->format($user->getLastLoginTime(), 'custom', 'F jS, Y g:i a');
+
     return [
-      '#markup' => $this->t('Hello <username>!<br/>Your last log in was <login date>.</br><a href="/user">Visit your profile</a>!welcome_message', [
-        '!welcome_message' => '<br/>' . $config['welcome_message'] ?? '',
+      '#markup' => $this->t('Hello :username!<br/>Your last log in was :last.</br><a href="@url">Visit your profile</a><br/>:welcome', [
+        ':username' => $user->getUsername(),
+        ':last' => $formatted_date,
+        ':welcome' => $config['welcome_message']['value'] ?? '',
       ]),
     ];
   }
@@ -34,7 +44,7 @@ class UserWelcomeBlock extends BlockBase implements BlockPluginInterface {
    * {@inheritdoc}
    */
   protected function blockAccess(AccountInterface $account) {
-    return AccessResult::allowedIfHasPermission($account, 'access content');
+    return AccessResult::allowedIf(!\Drupal::currentUser()->isAnonymous());
   }
 
   /**
@@ -50,7 +60,8 @@ class UserWelcomeBlock extends BlockBase implements BlockPluginInterface {
       '#title' => $this->t('Welcome Message'),
       '#description' => $this->t('Message to display to users who have logged in.'),
       '#format' => 'plain_text',
-      '#default_value' => $config['welcome_message'] ?? '',
+      '#allowed_formats' => ['plain_text'],
+      '#default_value' => $this->configuration['welcome_message']['value'] ?? '',
     ];
 
     return $form;
@@ -62,6 +73,13 @@ class UserWelcomeBlock extends BlockBase implements BlockPluginInterface {
   public function blockSubmit($form, FormStateInterface $form_state) {
     $this->configuration['user_welcome_block_settings'] = $form_state->getValue('user_welcome_block_settings');
     $this->configuration['welcome_message'] = $form_state->getValue('welcome_message');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheMaxAge() {
+    return 0;
   }
 
 }
