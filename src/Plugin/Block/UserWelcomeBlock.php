@@ -8,6 +8,8 @@ use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\Core\Url;
+use Drupal\user\Entity\User;
 
 /**
  * Provides a user welcome block.
@@ -26,15 +28,17 @@ class UserWelcomeBlock extends BlockBase implements BlockPluginInterface {
   public function build() {
     $config = $this->getConfiguration();
 
-    $user = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id());
+    $user = User::load(\Drupal::currentUser()->id());
 
-    // Format: December 21st, 2012 9:01 am
+    // Format example: December 21st, 2012 9:01 am.
     $formatted_date = \Drupal::service('date.formatter')->format($user->getLastLoginTime(), 'custom', 'F jS, Y g:i a');
+    $url = Url::fromRoute('entity.user.canonical', ['user' => $user->id()]);
 
     return [
-      '#markup' => $this->t('Hello :username!<br/>Your last log in was :last.</br><a href="@url">Visit your profile</a><br/>:welcome', [
+      '#markup' => $this->t('Hello :username!<br/>Your last log in was %date.</br><a href="@url">Visit your profile</a><br/>:welcome', [
         ':username' => $user->getUsername(),
-        ':last' => $formatted_date,
+        '%date' => $formatted_date,
+        '@url' => $url->toString(),
         ':welcome' => $config['welcome_message']['value'] ?? '',
       ]),
     ];
@@ -52,7 +56,7 @@ class UserWelcomeBlock extends BlockBase implements BlockPluginInterface {
    */
   public function blockForm($form, FormStateInterface $form_state) {
     $form = parent::blockForm($form, $form_state);
-  
+
     $config = $this->getConfiguration();
 
     $form['welcome_message'] = [
