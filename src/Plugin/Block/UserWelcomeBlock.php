@@ -36,7 +36,7 @@ class UserWelcomeBlock extends BlockBase implements BlockPluginInterface {
 
     return [
       '#markup' => $this->t('Hello :username!<br/>Your last log in was %date.</br><a href="@url">Visit your profile</a><br/>:welcome', [
-        ':username' => $user->getUsername(),
+        ':username' => $user->getAccountName(),
         '%date' => $formatted_date,
         '@url' => $url->toString(),
         ':welcome' => $config['welcome_message']['value'] ?? '',
