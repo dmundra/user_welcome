@@ -11,8 +11,10 @@ CONTENTS OF THIS FILE
 
 INTRODUCTION
 ------------
- 
+
  Provides a block that welcomes the user with their last login date, link to their profile, and welcome message.
+ 
+ ![Screenshot of the block in the sidebar](screenshot.png)
 
 RECOMMENDED MODULES
 -------------------
@@ -35,7 +37,7 @@ TROUBLESHOOTING
 ---------------
 
  * N/A
- 
+
 TODOs
 ---------------
 
