@@ -75,7 +75,6 @@ class UserWelcomeBlock extends BlockBase implements BlockPluginInterface {
    * {@inheritdoc}
    */
   public function blockSubmit($form, FormStateInterface $form_state) {
-    $this->configuration['user_welcome_block_settings'] = $form_state->getValue('user_welcome_block_settings');
     $this->configuration['welcome_message'] = $form_state->getValue('welcome_message');
   }
 
