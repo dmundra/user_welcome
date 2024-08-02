@@ -2,5 +2,5 @@ name: User Welcome
 type: module
 description: Provides a block which welcomes the user.
 core: 8.x
-core_version_requirement: ^8 || ^9 || ^10
+core_version_requirement: ^8 || ^9 || ^10 || ^11
 package: Custom
