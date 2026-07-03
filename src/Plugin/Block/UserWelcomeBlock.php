@@ -7,7 +7,6 @@ use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Url;
 use Drupal\user\Entity\User;
 
